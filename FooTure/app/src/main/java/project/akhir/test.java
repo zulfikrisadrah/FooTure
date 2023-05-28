@@ -17,7 +17,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class FooTure extends Application {
+public class test extends Application {
     private Stage primaryStage;
 
     DropShadow dropShadow = new DropShadow();
@@ -247,21 +247,10 @@ public class FooTure extends Application {
             detailPesananScene.show();
         });
 
-        Button clearButton = new Button("CLEAR");
-        clearButton.setPrefWidth(160);
-        clearButton.setPrefHeight(40);
-        clearButton.setStyle("-fx-font-size: 25px; -fx-text-fill: white;");
-        clearButton.setOnAction(event -> {
-            input1.setText("0");
-            input2.setText("0");
-            input3.setText("0");
-            input4.setText("0");
-        });
-
         label.setEffect(dropShadow); 
         label.setBackground(background); menu1.setBackground(background); menu1.setBackground(background); menu2.setBackground(background); menu3.setBackground(background); menu4.setBackground(background); 
         kurang1.setBackground(background); tambah1.setBackground(background); kurang2.setBackground(background); tambah2.setBackground(background); kurang3.setBackground(background); tambah3.setBackground(background); kurang4.setBackground(background); tambah4.setBackground(background);
-        backButton.setBackground(background); confirmButton.setBackground(background); clearButton.setBackground(background);
+        backButton.setBackground(background); confirmButton.setBackground(background);
 
         HBox baris1 = new HBox(3);
         baris1.getChildren().addAll(menu1, kurang1, input1, tambah1);
@@ -276,7 +265,7 @@ public class FooTure extends Application {
         baris4.getChildren().addAll(menu4, kurang4, input4, tambah4);
 
         HBox menuButton = new HBox(20);
-        menuButton.getChildren().addAll(backButton, clearButton, confirmButton);
+        menuButton.getChildren().addAll(backButton, confirmButton);
 
         VBox root = new VBox(20);
         root.getChildren().addAll(label, baris1, baris2, baris3, baris4, menuButton);
@@ -287,8 +276,6 @@ public class FooTure extends Application {
     }
 
     private Scene detailPesananScene(int jumlahMenu1, int jumlahMenu2, int jumlahMenu3, int jumlahMenu4) {
-        Label total = new Label("");
-        
         Label label = new Label("Detail Pesanan");
         label.setAlignment(Pos.CENTER);
         label.setPrefHeight(30);
@@ -300,6 +287,7 @@ public class FooTure extends Application {
         root.getChildren().add(label);
     
         int jumlah = (jumlahMenu1 * 15000) + (jumlahMenu2 * 20000) + (jumlahMenu3 * 20000) + (jumlahMenu4 * 25000);
+        Label total = new Label("");
         total.setText(" Total \t\t| Rp" + String.valueOf(jumlah));
         total.setAlignment(Pos.CENTER);
         total.setPrefHeight(40);
@@ -353,33 +341,16 @@ public class FooTure extends Application {
             stage.close();
         });
 
-        Button promoButton = new Button("Promo");
-        promoButton.setPrefWidth(100);
-        promoButton.setPrefHeight(30);
-        promoButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
-        promoButton.setOnAction(event -> {
-            Stage promoScene = new Stage();
-            Scene scene3 = promoScene(jumlah, total);
-            promoScene.setScene(scene3);
-            promoScene.setTitle("KODE PROMO");
-            promoScene.show();
+        Button codeButton = new Button();
+        codeButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+        codeButton.setOnAction(event -> {
+            
         });
-
-        Button bayarButton = new Button("BAYAR");
-        bayarButton.setPrefWidth(100);
-        bayarButton.setPrefHeight(30);
-        bayarButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
-        bayarButton.setOnAction(event -> {
-            // jumlahMenu1.setText("0");
-        });
-        
-        HBox menu = new HBox (20);
-        menu.getChildren().addAll(closeButton, promoButton, bayarButton);
 
         root.getChildren().add(total);
-        root.getChildren().add(menu);
+        root.getChildren().add(closeButton);
 
-        label.setBackground(background2); closeButton.setBackground(background2); promoButton.setBackground(background2); total.setBackground(background2); bayarButton.setBackground(background2);
+        label.setBackground(background2); closeButton.setBackground(background2); total.setBackground(background2);
 
         return new Scene(root, 400, 350);
     }
@@ -393,47 +364,5 @@ public class FooTure extends Application {
         return detail;
     }
 
-    private Scene promoScene(int jumlah, Label total){
-        String kodePromo = "PROMO";
-        int persen = 10;
-        
-        Label label = new Label("Masukkan Kode Promo");
-        label.setAlignment(Pos.CENTER);
-        label.setPrefHeight(30);
-        label.setPrefWidth(200);
-        label.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
 
-        TextField inputCode = new TextField();
-        inputCode.setAlignment(Pos.CENTER);
-        inputCode.setMaxWidth(120);
-        inputCode.setMaxHeight(40);
-        inputCode.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
-        
-        Button okButton = new Button("OK");
-        okButton.setAlignment(Pos.CENTER);
-        okButton.setPrefHeight(40);
-        okButton.setPrefWidth(40);
-        okButton.setStyle("-fx-font-size: 10px; -fx-text-fill: white;");
-        okButton.setOnAction(event -> {
-            String userInput = inputCode.getText();
-            if (userInput.equals(kodePromo)){
-                int diskon = jumlah * persen;
-                int hasilAkhir = jumlah - diskon/100;
-                total.setText(" Total \t\t| Rp" + String.valueOf(hasilAkhir));
-                Stage stage = (Stage) okButton.getScene().getWindow();
-                stage.close();
-            }
-        });
-
-        HBox hbox = new HBox(20);
-        hbox.setAlignment(Pos.CENTER);
-        hbox.getChildren().addAll(inputCode, okButton);
-
-        VBox root = new VBox(20);
-        root.getChildren().addAll(label, hbox);
-        root.setAlignment(Pos.CENTER);
-
-        label.setBackground(background); okButton.setBackground(background);
-        return new Scene(root, 200, 100);
-    }
 }
