@@ -105,6 +105,8 @@ public class FooTure extends Application {
     List<ProdukDipesan> listProdukDipesan = new ArrayList<>();   
     HashMap<Integer, Integer> hargaProduk = new HashMap<>(); 
 
+    int hasilAkhir = 0;
+
     void initProduk(){
         Produk produk1 = new Produk();
         produk1.setId(1);
@@ -200,6 +202,22 @@ public class FooTure extends Application {
         VBox root = new VBox(20);
         root.setAlignment(Pos.TOP_LEFT);
         root.getChildren().add(label1);
+        
+        Button confirmButton = new Button("CONFIRM");
+        confirmButton.setPrefWidth(160);  
+        confirmButton.setPrefHeight(40);  
+        confirmButton.setStyle("-fx-font-size: 25px; -fx-text-fill: white;");
+        confirmButton.setDisable(true);
+
+        if (listProdukDipesan.size() > 0){
+            confirmButton.setOnAction(e -> {
+                Stage detailPesananScene = new Stage();
+                Scene scene2 = detailPesananScene();
+                detailPesananScene.setScene(scene2);
+                detailPesananScene.setTitle("FooTure Detail");
+                detailPesananScene.show();
+            });
+        } 
 
         for (ProdukDipesan produkDipesan : listProdukDipesan) {
             Label menu = new Label("  " + produkDipesan.getProduk().getNama() + "\t\t| " + hargaProduk.get(produkDipesan.getProduk().getId())/1000 + "K");
@@ -225,9 +243,18 @@ public class FooTure extends Application {
                 int jumlahPesanan = Integer.parseInt(input.getText());
                 if (jumlahPesanan > 0){
                     input.setText(String.valueOf(jumlahPesanan-1));
-                    produkDipesan.kurangPesanan();
+                    produkDipesan.kurangPesanan();              
+                }
+                
+                boolean adaKuantitas = false;
+                for (ProdukDipesan produkDipesan1 : listProdukDipesan) {
+                    if (produkDipesan1.getKuantitas() > 0) adaKuantitas = true;    
+                }
+                if (!adaKuantitas) {
+                    confirmButton.setDisable(true);
                 }
             });
+            
             Button tambah = new Button("+");
             tambah.setAlignment(Pos.CENTER);
             tambah.setPrefHeight(50);
@@ -238,6 +265,15 @@ public class FooTure extends Application {
                 int jumlahPesanan = Integer.parseInt(input.getText());
                 input.setText(String.valueOf(jumlahPesanan + 1));
                 produkDipesan.tambahPesanan();
+
+                boolean adaKuantitas = false;
+                for (ProdukDipesan produkDipesan1 : listProdukDipesan) {
+                    if (produkDipesan1.getKuantitas() > 0) adaKuantitas = true;
+                    if (adaKuantitas) {
+                        confirmButton.setDisable(false);
+                        break;
+                    }
+                }
             });
             
             menu.setBackground(background2); kurang.setBackground(background2); input.setBackground(background2); tambah.setBackground(background2);
@@ -255,20 +291,7 @@ public class FooTure extends Application {
         backButton.setOnAction(e -> {
             start(primaryStage);
         });
-
-        Button confirmButton = new Button("CONFIRM");
-        confirmButton.setPrefWidth(160);  
-        confirmButton.setPrefHeight(40);  
-        confirmButton.setStyle("-fx-font-size: 25px; -fx-text-fill: white;");
-
-        confirmButton.setOnAction(e -> {
-            Stage detailPesananScene = new Stage();
-            Scene scene2 = detailPesananScene();
-            detailPesananScene.setScene(scene2);
-            detailPesananScene.setTitle("FooTure Detail");
-            detailPesananScene.show();
-        });
-
+        
         Button clearButton = new Button("CLEAR");
         clearButton.setPrefWidth(160);
         clearButton.setPrefHeight(40);
@@ -280,6 +303,7 @@ public class FooTure extends Application {
                     Label input = (Label) node;
                     input.setText("0");
                     produkDipesan.setKuantitas(0);
+                    confirmButton.setDisable(true);
                 }
             }
         });
@@ -316,6 +340,7 @@ public class FooTure extends Application {
             if (jumlahMenu > 0) {
                 int totalHargaMenu = hargaMenu * jumlahMenu;
                 totalHarga += totalHargaMenu;
+                hasilAkhir = totalHarga;
 
                 Label detail = detailLabel(jumlahMenu, produkDipesan.getProduk().getNama(), totalHargaMenu);
                 detail.setId("detail_" + produkDipesan.produk.getId());
@@ -327,7 +352,7 @@ public class FooTure extends Application {
                 root.getChildren().add(detail);
             }
         }
-        
+               
         Label total = new Label(" Total \t\t| Rp" + String.valueOf(totalHarga));
         total.setAlignment(Pos.CENTER);
         total.setPrefHeight(40);
@@ -347,7 +372,7 @@ public class FooTure extends Application {
         promoButton.setPrefHeight(30);
         promoButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
 
-        final int totalHargaAkhir = totalHarga;
+        int totalHargaAkhir = totalHarga;
         promoButton.setOnAction(event -> {
             Stage promoScene = new Stage();
             Scene scene3 = promoScene(totalHargaAkhir, total);
@@ -361,7 +386,11 @@ public class FooTure extends Application {
         bayarButton.setPrefHeight(30);
         bayarButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
         bayarButton.setOnAction(event -> {
-            // jumlahMenu1.setText("0");
+            Stage bayarScene = new Stage();
+            Scene scene4 = bayarScene(hasilAkhir);
+            bayarScene.setScene(scene4);
+            bayarScene.setTitle("Pembayaran");
+            bayarScene.show();
         });
         
         HBox menu = new HBox (20);
@@ -409,7 +438,7 @@ public class FooTure extends Application {
             String userInput = inputCode.getText();
             if (userInput.equals(diskon.getKodePromo())){
                 int hargaDiskon = jumlah * diskon.getPersen();
-                int hasilAkhir = jumlah - hargaDiskon/100;
+                hasilAkhir = jumlah - hargaDiskon/100;
                 total.setText(" Total \t\t| Rp" + String.valueOf(hasilAkhir));
                 Stage stage = (Stage) okButton.getScene().getWindow();
                 stage.close();
@@ -418,9 +447,9 @@ public class FooTure extends Application {
                 promoBerhasilScene.setScene(scene4);
                 promoBerhasilScene.setTitle("Promo");
                 promoBerhasilScene.show();
-            } 
+            }     
         });
- 
+        
         HBox hbox = new HBox(20);
         hbox.setAlignment(Pos.CENTER);
         hbox.getChildren().addAll(inputCode, okButton);
@@ -433,9 +462,91 @@ public class FooTure extends Application {
         return new Scene(root, 200, 100);
     }
 
+        private Scene bayarScene(int hasilAkhir){
+            Label label = new Label("Masukkan Nominal Pembayaran");
+            label.setAlignment(Pos.CENTER);
+            label.setPrefHeight(30);
+            label.setPrefWidth(300);
+            label.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+    
+            TextField inputPembayaran = new TextField();
+            inputPembayaran.setAlignment(Pos.CENTER);
+            inputPembayaran.setMaxWidth(120);
+            inputPembayaran.setMaxHeight(40);
+            inputPembayaran.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
+            
+            Button okButton = new Button("OK");
+            okButton.setAlignment(Pos.CENTER);
+            okButton.setPrefHeight(40);
+            okButton.setPrefWidth(40);
+            okButton.setStyle("-fx-font-size: 10px; -fx-text-fill: white;");
+            okButton.setOnAction(event -> {
+                int userInput = Integer.parseInt(inputPembayaran.getText());
+                if (userInput >= hasilAkhir){
+                    Stage stage = (Stage) okButton.getScene().getWindow();
+                    stage.close();
+                    Stage bayarBerhasilScene = new Stage();
+                    Scene scene5 = bayarBerhasilScene();
+                    bayarBerhasilScene.setScene(scene5);
+                    bayarBerhasilScene.setTitle("Selesai");
+                    bayarBerhasilScene.show();
+
+                } else {
+                    Stage stage = (Stage) okButton.getScene().getWindow();
+                    stage.close();
+                    Stage bayarGagalScene = new Stage();
+                    Scene scene6 = bayarGagalScene();
+                    bayarGagalScene.setScene(scene6);
+                    bayarGagalScene.setTitle("Gagal");
+                    bayarGagalScene.show();
+                }
+            });
+
+        HBox hbox = new HBox(20);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.getChildren().addAll(inputPembayaran, okButton);
+
+        VBox root = new VBox(20);
+        root.getChildren().addAll(label, hbox);
+        root.setAlignment(Pos.CENTER);
+
+        label.setBackground(background); okButton.setBackground(background);
+        return new Scene(root, 350, 100);
+    }
+
     private Scene promoBerhasilScene(int jumlah, Diskon diskon){
         int hargaDiskon = jumlah * diskon.getPersen()/100;
-        Label label = new Label("Anda Mendapat Diskon " + hargaDiskon);
+        Label label = new Label("Anda Mendapat Diskon Rp" + hargaDiskon);
+        label.setAlignment(Pos.CENTER);
+        label.setPrefHeight(30);
+        label.setPrefWidth(300);
+        label.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+
+        VBox root = new VBox(20);
+        root.getChildren().addAll(label);
+        root.setAlignment(Pos.CENTER);
+
+        label.setBackground(background2);
+        return new Scene(root, 400, 50);
+    }
+
+    private Scene bayarBerhasilScene(){
+        Label label = new Label("Pemesanan Berhasil");
+        label.setAlignment(Pos.CENTER);
+        label.setPrefHeight(30);
+        label.setPrefWidth(300);
+        label.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+
+        VBox root = new VBox(20);
+        root.getChildren().addAll(label);
+        root.setAlignment(Pos.CENTER);
+
+        label.setBackground(background2);
+        return new Scene(root, 400, 50);
+    }
+
+    private Scene bayarGagalScene(){
+        Label label = new Label("Pembayaran Gagal");
         label.setAlignment(Pos.CENTER);
         label.setPrefHeight(30);
         label.setPrefWidth(300);
