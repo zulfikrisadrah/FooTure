@@ -74,6 +74,31 @@ class Produk{
     }
 }
 
+class Admin{
+    String username;
+    String password; 
+    int antrian;
+
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    public String getPassword() {
+        return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    public int getAntrian() {
+        return antrian;
+    }
+    public void setAntrian(int antrian) {
+        this.antrian = antrian;
+    }
+}
+
 class Diskon{
     int persen;
     String kodePromo;
@@ -163,7 +188,7 @@ public class FooTure extends Application {
         label.setPrefWidth(250);
         label.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
 
-        Image logoImage = new Image("C:\\Users\\Fikri\\Desktop\\PRAKTIKUM SEMESTER 2\\Praktikum\\Pertemuan 9\\app\\src\\main\\resources\\images-removebg-preview.png");
+        Image logoImage = new Image("D:\\Fikri\\Kuliah\\SEMESTER 2\\Praktikum\\Projek Akhir\\app\\src\\main\\resources\\images-removebg-preview.png");
         ImageView logoImageView = new ImageView(logoImage);
         logoImageView.setFitWidth(90);
         logoImageView.setFitHeight(100);
@@ -172,19 +197,35 @@ public class FooTure extends Application {
         startButton.setPrefWidth(200);
         startButton.setPrefHeight(50);
         startButton.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
-
         startButton.setOnAction(event -> {
             showMenu();
+            for (ProdukDipesan produkDipesan : listProdukDipesan){
+                produkDipesan.setKuantitas(0);
+            }
+        });
+
+        Button loginButton = new Button("Login As Admin");
+        loginButton.setPrefWidth(150);
+        loginButton.setPrefHeight(30);
+        loginButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+        loginButton.setOnAction(event -> {
+            Stage loginScene = new Stage();
+            Scene scene6 = showLoginMenu();
+            loginScene.setScene(scene6);
+            loginScene.setTitle("Login Admin");
+            loginScene.show();
         });
 
         label.setEffect(dropShadow);
         startButton.setEffect(dropShadow);
         label.setBackground(background);
         startButton.setBackground(background);
+        loginButton.setBackground(background);
+        
 
         VBox root = new VBox(20);
         root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(label, logoImageView, startButton);
+        root.getChildren().addAll(label, logoImageView, startButton, loginButton);
 
         Scene scene1 = new Scene(root, 600, 500);
         primaryStage.setTitle("FooTure");
@@ -193,15 +234,15 @@ public class FooTure extends Application {
     }
 
     private void showMenu() {
-        Label label1 = new Label("Daftar Menu");
-        label1.setAlignment(Pos.CENTER);
-        label1.setPrefHeight(50);
-        label1.setPrefWidth(250);
-        label1.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
+        Label label = new Label("Daftar Menu");
+        label.setAlignment(Pos.CENTER);
+        label.setPrefHeight(50);
+        label.setPrefWidth(250);
+        label.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
 
         VBox root = new VBox(20);
         root.setAlignment(Pos.TOP_LEFT);
-        root.getChildren().add(label1);
+        root.getChildren().add(label);
         
         Button confirmButton = new Button("CONFIRM");
         confirmButton.setPrefWidth(160);  
@@ -231,7 +272,7 @@ public class FooTure extends Application {
             kurang.setPrefHeight(50);
             kurang.setPrefWidth(50);
             kurang.setStyle("-fx-font-size: 22px; -fx-text-fill: white;");
-           
+
             Label input = new Label("0");
             input.setId(String.valueOf(produkDipesan.getProduk().getId()));
             input.setAlignment(Pos.CENTER);
@@ -259,7 +300,7 @@ public class FooTure extends Application {
             tambah.setAlignment(Pos.CENTER);
             tambah.setPrefHeight(50);
             tambah.setPrefWidth(50);
-           
+
             tambah.setStyle("-fx-font-size: 22px; -fx-text-fill: white;");
             tambah.setOnAction(e ->{
                 int jumlahPesanan = Integer.parseInt(input.getText());
@@ -308,7 +349,7 @@ public class FooTure extends Application {
             }
         });
 
-        label1.setBackground(background2);
+        label.setBackground(background2);
         backButton.setBackground(background2);         
         clearButton.setBackground(background2);
         confirmButton.setBackground(background2);
@@ -320,6 +361,34 @@ public class FooTure extends Application {
         Scene scene2 = new Scene(root, 600, 500);
 
         primaryStage.setScene(scene2);
+    }
+
+    private Scene showAdminScene(){
+        Label label = new Label("Riwayat Pesanan");
+        label.setAlignment(Pos.CENTER);
+        label.setPrefHeight(50);
+        label.setPrefWidth(250);
+        label.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+
+        VBox root = new VBox(20);
+        root.setAlignment(Pos.TOP_LEFT);
+        root.getChildren().add(label);
+        
+        Button promoButton = new Button("PROMO");
+        promoButton.setPrefWidth(160);  
+        promoButton.setPrefHeight(40);  
+        promoButton.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+
+        HBox menuButton = new HBox(20);
+        menuButton.getChildren().addAll(promoButton);
+        root.getChildren().add(menuButton);
+
+        Scene scene3 = new Scene(root, 600, 500);
+
+        label.setBackground(background); promoButton.setBackground(background);
+
+        primaryStage.setScene(scene3);
+        return new Scene(root, 400, 350);
     }
 
     private Scene detailPesananScene() {
@@ -352,7 +421,7 @@ public class FooTure extends Application {
                 root.getChildren().add(detail);
             }
         }
-               
+
         Label total = new Label(" Total \t\t| Rp" + String.valueOf(totalHarga));
         total.setAlignment(Pos.CENTER);
         total.setPrefHeight(40);
@@ -462,6 +531,58 @@ public class FooTure extends Application {
         return new Scene(root, 200, 100);
     }
 
+    private Scene showLoginMenu(){
+        Admin admin = new Admin();
+        admin.setUsername("username");
+        admin.setPassword("password");
+
+        Label label = new Label("Login Menu");
+        label.setAlignment(Pos.CENTER);
+        label.setPrefHeight(30);
+        label.setPrefWidth(150);
+        label.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+
+        TextField inputUsername = new TextField();
+        inputUsername.setPromptText("Username");
+        inputUsername.setAlignment(Pos.CENTER);
+        inputUsername.setMaxWidth(120);
+        inputUsername.setMaxHeight(40);
+        inputUsername.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
+        
+        TextField inputPassword = new TextField();
+        inputPassword.setPromptText("Password");
+        inputPassword.setAlignment(Pos.CENTER);
+        inputPassword.setMaxWidth(120);
+        inputPassword.setMaxHeight(40);
+        inputPassword.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
+
+        Button loginButton = new Button("Login");
+        loginButton.setAlignment(Pos.CENTER);
+        loginButton.setPrefHeight(30);
+        loginButton.setPrefWidth(70);
+        loginButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+        loginButton.setOnAction(event -> {
+            String userInputUsername = inputUsername.getText();
+            String userInputPassword = inputPassword.getText();
+            if (userInputUsername.equals(admin.getUsername()) && userInputPassword.equals(admin.getPassword())){
+                Stage loginMenu = (Stage) loginButton.getScene().getWindow();
+                loginMenu.close();
+                Stage showAdminScene = new Stage();
+                Scene scene7 = showAdminScene();
+                showAdminScene.setScene(scene7);
+                showAdminScene.setTitle("FooTure Admin");
+                showAdminScene.show();
+            } 
+        });
+        
+        VBox root = new VBox(5);
+        root.getChildren().addAll(label, inputUsername, inputPassword, loginButton);
+        root.setAlignment(Pos.CENTER);
+
+        label.setBackground(background); loginButton.setBackground(background);
+        return new Scene(root, 300, 150);
+    }
+
         private Scene bayarScene(int hasilAkhir){
             Label label = new Label("Masukkan Nominal Pembayaran");
             label.setAlignment(Pos.CENTER);
@@ -489,11 +610,10 @@ public class FooTure extends Application {
                     Scene scene5 = bayarBerhasilScene();
                     bayarBerhasilScene.setScene(scene5);
                     bayarBerhasilScene.setTitle("Selesai");
+                    start(primaryStage);
                     bayarBerhasilScene.show();
 
                 } else {
-                    Stage stage = (Stage) okButton.getScene().getWindow();
-                    stage.close();
                     Stage bayarGagalScene = new Stage();
                     Scene scene6 = bayarGagalScene();
                     bayarGagalScene.setScene(scene6);
