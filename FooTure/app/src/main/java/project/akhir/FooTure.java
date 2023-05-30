@@ -1,4 +1,4 @@
-package project.akhir;
+package projek.akhir;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,8 +100,9 @@ class Admin{
 }
 
 class Diskon{
-    int persen;
-    String kodePromo;
+    private int persen;
+    private String kodePromo;
+
     public int getPersen() {
         return persen;
     }
@@ -127,10 +128,15 @@ public class FooTure extends Application {
     Background background2 = new Background(backgroundFill);
 
     List<Produk> listProduk = new ArrayList<>();   
+    List<Diskon> listDiskon = new ArrayList<>();   
+    Diskon diskonAktif = null;
+    int hargaDiskon;
+
     List<ProdukDipesan> listProdukDipesan = new ArrayList<>();   
     HashMap<Integer, Integer> hargaProduk = new HashMap<>(); 
 
     int hasilAkhir = 0;
+    int antrianAwal = 0;
 
     void initProduk(){
         Produk produk1 = new Produk();
@@ -188,11 +194,6 @@ public class FooTure extends Application {
         label.setPrefWidth(250);
         label.setStyle("-fx-font-size: 24px; -fx-text-fill: white;");
 
-        Image logoImage = new Image("D:\\Fikri\\Kuliah\\SEMESTER 2\\Praktikum\\Projek Akhir\\app\\src\\main\\resources\\images-removebg-preview.png");
-        ImageView logoImageView = new ImageView(logoImage);
-        logoImageView.setFitWidth(90);
-        logoImageView.setFitHeight(100);
-
         Button startButton = new Button("PESAN SEKARANG");
         startButton.setPrefWidth(200);
         startButton.setPrefHeight(50);
@@ -204,7 +205,7 @@ public class FooTure extends Application {
             }
         });
 
-        Button loginButton = new Button("Login As Admin");
+        Button loginButton = new Button("Login as Admin");
         loginButton.setPrefWidth(150);
         loginButton.setPrefHeight(30);
         loginButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
@@ -225,7 +226,7 @@ public class FooTure extends Application {
 
         VBox root = new VBox(20);
         root.setAlignment(Pos.CENTER);
-        root.getChildren().addAll(label, logoImageView, startButton, loginButton);
+        root.getChildren().addAll(label, startButton, loginButton);
 
         Scene scene1 = new Scene(root, 600, 500);
         primaryStage.setTitle("FooTure");
@@ -272,7 +273,7 @@ public class FooTure extends Application {
             kurang.setPrefHeight(50);
             kurang.setPrefWidth(50);
             kurang.setStyle("-fx-font-size: 22px; -fx-text-fill: white;");
-
+           
             Label input = new Label("0");
             input.setId(String.valueOf(produkDipesan.getProduk().getId()));
             input.setAlignment(Pos.CENTER);
@@ -300,7 +301,7 @@ public class FooTure extends Application {
             tambah.setAlignment(Pos.CENTER);
             tambah.setPrefHeight(50);
             tambah.setPrefWidth(50);
-
+           
             tambah.setStyle("-fx-font-size: 22px; -fx-text-fill: white;");
             tambah.setOnAction(e ->{
                 int jumlahPesanan = Integer.parseInt(input.getText());
@@ -363,8 +364,8 @@ public class FooTure extends Application {
         primaryStage.setScene(scene2);
     }
 
-    private Scene showAdminScene(){
-        Label label = new Label("Riwayat Pesanan");
+    private void showAdminScene(){
+        Label label = new Label("Pesanan Masuk");
         label.setAlignment(Pos.CENTER);
         label.setPrefHeight(50);
         label.setPrefWidth(250);
@@ -374,21 +375,47 @@ public class FooTure extends Application {
         root.setAlignment(Pos.TOP_LEFT);
         root.getChildren().add(label);
         
-        Button promoButton = new Button("PROMO");
+        Button logoutButton = new Button("Logout");
+        logoutButton.setPrefWidth(160);  
+        logoutButton.setPrefHeight(40);  
+        logoutButton.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+        logoutButton.setOnAction(e -> {
+            start(primaryStage);
+        });
+
+        Button promoButton = new Button("Promo");
         promoButton.setPrefWidth(160);  
         promoButton.setPrefHeight(40);  
         promoButton.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+        promoButton.setOnAction(event ->{
+            Stage ubahPromo = new Stage();
+            Scene scene10 = ubahPromoScene();
+            ubahPromo.setScene(scene10);
+            ubahPromo.setTitle("Kode Promo");
+            ubahPromo.show();
+        });
+
+        Button antrianButton = new Button("Antrian");
+        antrianButton.setPrefWidth(160);  
+        antrianButton.setPrefHeight(40);  
+        antrianButton.setStyle("-fx-font-size: 20px; -fx-text-fill: white;");
+        antrianButton.setOnAction(event -> {
+            Stage antrianScene = new Stage();
+            Scene scene8 = showAntrianScene();
+            antrianScene.setScene(scene8);
+            antrianScene.setTitle("Nomor Antrian");
+            antrianScene.show();
+        });
 
         HBox menuButton = new HBox(20);
-        menuButton.getChildren().addAll(promoButton);
+        menuButton.getChildren().addAll(logoutButton, promoButton, antrianButton);
         root.getChildren().add(menuButton);
 
-        Scene scene3 = new Scene(root, 600, 500);
+        label.setBackground(background); promoButton.setBackground(background); antrianButton.setBackground(background); logoutButton.setBackground(background);
 
-        label.setBackground(background); promoButton.setBackground(background);
+        Scene scene2 = new Scene(root, 600, 500);
 
-        primaryStage.setScene(scene3);
-        return new Scene(root, 400, 350);
+        primaryStage.setScene(scene2);
     }
 
     private Scene detailPesananScene() {
@@ -421,7 +448,7 @@ public class FooTure extends Application {
                 root.getChildren().add(detail);
             }
         }
-
+               
         Label total = new Label(" Total \t\t| Rp" + String.valueOf(totalHarga));
         total.setAlignment(Pos.CENTER);
         total.setPrefHeight(40);
@@ -436,19 +463,23 @@ public class FooTure extends Application {
             stage.close();
         });
 
+        int totalHargaAkhir = totalHarga;
         Button promoButton = new Button("Promo");
         promoButton.setPrefWidth(100);
         promoButton.setPrefHeight(30);
         promoButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
 
-        int totalHargaAkhir = totalHarga;
-        promoButton.setOnAction(event -> {
+        if (listDiskon.size() == 0){
+            promoButton.setDisable(true);
+        } else {
+            promoButton.setOnAction(event ->{
             Stage promoScene = new Stage();
             Scene scene3 = promoScene(totalHargaAkhir, total);
             promoScene.setScene(scene3);
             promoScene.setTitle("Promo");
             promoScene.show();
-        });
+            });
+        }
 
         Button bayarButton = new Button("BAYAR");
         bayarButton.setPrefWidth(100);
@@ -481,22 +512,18 @@ public class FooTure extends Application {
         return detail;
     }
 
-    private Scene promoScene(int jumlah, Label total){
-        Diskon diskon = new Diskon();
-        diskon.setPersen(10);
-        diskon.setKodePromo("PROMO");
-
+    private Scene promoScene(int totalHargaAkhir, Label total){
         Label label = new Label("Masukkan Kode Promo");
         label.setAlignment(Pos.CENTER);
         label.setPrefHeight(30);
         label.setPrefWidth(200);
         label.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
 
-        TextField inputCode = new TextField();
-        inputCode.setAlignment(Pos.CENTER);
-        inputCode.setMaxWidth(120);
-        inputCode.setMaxHeight(40);
-        inputCode.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
+        TextField inputKode = new TextField();
+        inputKode.setAlignment(Pos.CENTER);
+        inputKode.setMaxWidth(120);
+        inputKode.setMaxHeight(40);
+        inputKode.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
         
         Button okButton = new Button("OK");
         okButton.setAlignment(Pos.CENTER);
@@ -504,24 +531,29 @@ public class FooTure extends Application {
         okButton.setPrefWidth(40);
         okButton.setStyle("-fx-font-size: 10px; -fx-text-fill: white;");
         okButton.setOnAction(event -> {
-            String userInput = inputCode.getText();
-            if (userInput.equals(diskon.getKodePromo())){
-                int hargaDiskon = jumlah * diskon.getPersen();
-                hasilAkhir = jumlah - hargaDiskon/100;
-                total.setText(" Total \t\t| Rp" + String.valueOf(hasilAkhir));
-                Stage stage = (Stage) okButton.getScene().getWindow();
-                stage.close();
-                Stage promoBerhasilScene = new Stage();
-                Scene scene4 = promoBerhasilScene(jumlah, diskon);
-                promoBerhasilScene.setScene(scene4);
-                promoBerhasilScene.setTitle("Promo");
-                promoBerhasilScene.show();
-            }     
+            for (Diskon diskon : listDiskon) {
+                String userInputKode = inputKode.getText();
+                if (diskon.getKodePromo().equals(userInputKode)){
+                    hargaDiskon = totalHargaAkhir * diskon.getPersen()/100;
+                    hasilAkhir = totalHargaAkhir - hargaDiskon;
+                    total.setText(" Total \t\t| Rp" + String.valueOf(hasilAkhir));
+                    diskonAktif = diskon;
+                }
+            }
+            total.setText(" Total \t\t| Rp" + String.valueOf(hasilAkhir));
+            Stage stage = (Stage) okButton.getScene().getWindow();
+            stage.close();
+            Stage promoBerhasilScene = new Stage();
+            Scene scene4 = promoBerhasilScene();
+            promoBerhasilScene.setScene(scene4);
+            promoBerhasilScene.setTitle("Promo");
+            promoBerhasilScene.show();
+            // }     
         });
         
         HBox hbox = new HBox(20);
         hbox.setAlignment(Pos.CENTER);
-        hbox.getChildren().addAll(inputCode, okButton);
+        hbox.getChildren().addAll(inputKode, okButton);
 
         VBox root = new VBox(20);
         root.getChildren().addAll(label, hbox);
@@ -567,11 +599,7 @@ public class FooTure extends Application {
             if (userInputUsername.equals(admin.getUsername()) && userInputPassword.equals(admin.getPassword())){
                 Stage loginMenu = (Stage) loginButton.getScene().getWindow();
                 loginMenu.close();
-                Stage showAdminScene = new Stage();
-                Scene scene7 = showAdminScene();
-                showAdminScene.setScene(scene7);
-                showAdminScene.setTitle("FooTure Admin");
-                showAdminScene.show();
+                showAdminScene();
             } 
         });
         
@@ -614,7 +642,7 @@ public class FooTure extends Application {
                     bayarBerhasilScene.show();
 
                 } else {
-                    Stage bayarGagalScene = new Stage();
+                     Stage bayarGagalScene = new Stage();
                     Scene scene6 = bayarGagalScene();
                     bayarGagalScene.setScene(scene6);
                     bayarGagalScene.setTitle("Gagal");
@@ -634,8 +662,7 @@ public class FooTure extends Application {
         return new Scene(root, 350, 100);
     }
 
-    private Scene promoBerhasilScene(int jumlah, Diskon diskon){
-        int hargaDiskon = jumlah * diskon.getPersen()/100;
+    private Scene promoBerhasilScene(){
         Label label = new Label("Anda Mendapat Diskon Rp" + hargaDiskon);
         label.setAlignment(Pos.CENTER);
         label.setPrefHeight(30);
@@ -678,5 +705,141 @@ public class FooTure extends Application {
 
         label.setBackground(background2);
         return new Scene(root, 400, 50);
+    }
+
+    private Scene showAntrianScene(){
+        String antrian = String.valueOf(antrianAwal);
+        Label label = new Label(antrian);
+        label.setAlignment(Pos.CENTER);
+        label.setPrefHeight(100);
+        label.setPrefWidth(100);
+        label.setStyle("-fx-font-size: 80px; -fx-text-fill: white;");
+
+        Button backButton = new Button("Back");
+        backButton.setPrefWidth(60);  
+        backButton.setPrefHeight(30);  
+        backButton.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
+
+        backButton.setOnAction(e -> {
+            showAdminScene();
+        });
+
+        Button editButton = new Button("Edit");
+        editButton.setPrefWidth(60);
+        editButton.setPrefHeight(30);
+        editButton.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
+        editButton.setOnAction(event -> {
+            antrianAwal = 0;
+            Stage editScene = new Stage();
+            Scene scene9 = showEditMenu();
+            editScene.setScene(scene9);
+            editScene.setTitle("Edit Antrian");
+            editScene.show();
+        });        
+
+        HBox menu = new HBox(10);
+        menu.setAlignment(Pos.CENTER);
+        menu.getChildren().addAll(backButton, editButton);
+
+        VBox root = new VBox(20);
+        root.getChildren().addAll(label, menu);
+        root.setAlignment(Pos.CENTER);
+        root.setBackground(background);
+
+        Scene scene8 = new Scene(root, 200, 200);
+        primaryStage.setScene(scene8);
+        return new Scene(root);
+    }
+
+    private Scene showEditMenu(){
+        TextField inputAntrian = new TextField();
+        inputAntrian.setPromptText("Input Antrian");
+        inputAntrian.setAlignment(Pos.CENTER);
+        inputAntrian.setMaxWidth(120);
+        inputAntrian.setMaxHeight(40);
+        inputAntrian.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+
+        Button ubahButton = new Button("Ganti");
+        ubahButton.setAlignment(Pos.CENTER);
+        ubahButton.setPrefHeight(30);
+        ubahButton.setPrefWidth(70);
+        ubahButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+        ubahButton.setOnAction(event -> {
+            int userInputAntrian = Integer.parseInt(inputAntrian.getText());
+            antrianAwal += userInputAntrian;
+            showAntrianScene();
+            Stage loginMenu = (Stage) ubahButton.getScene().getWindow();
+            loginMenu.close();
+        });
+        
+        VBox root = new VBox(5);
+        root.getChildren().addAll(inputAntrian, ubahButton);
+        root.setAlignment(Pos.CENTER);
+
+        inputAntrian.setBackground(background); ubahButton.setBackground(background);
+        Scene scene3 = new Scene(root, 300, 150);
+        primaryStage.setScene(scene3);
+
+        return new Scene(root, 300, 150);
+    }
+
+    private Scene ubahPromoScene(){
+        TextField inputKode = new TextField();
+        inputKode.setPromptText("Input Kode");
+        inputKode.setAlignment(Pos.CENTER);
+        inputKode.setMaxWidth(120);
+        inputKode.setMaxHeight(40);
+        inputKode.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
+
+        TextField inputPersen = new TextField();
+        inputPersen.setPromptText("Besar Diskon");
+        inputPersen.setAlignment(Pos.CENTER);
+        inputPersen.setMaxWidth(120);
+        inputPersen.setMaxHeight(40);
+        inputPersen.setStyle("-fx-font-size: 15px; -fx-text-fill: black;");
+
+        Button backButton = new Button("BACK");
+        backButton.setPrefWidth(60);  
+        backButton.setPrefHeight(40);  
+        backButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+
+        backButton.setOnAction(e -> {
+            showAdminScene();
+        });
+
+        Button okButton = new Button("OK");
+        okButton.setAlignment(Pos.CENTER);
+        okButton.setPrefHeight(40);
+        okButton.setPrefWidth(60);
+        okButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
+        okButton.setOnAction(event -> {
+            String adminInputKode = inputKode.getText();
+            String valueInputPersen = inputPersen.getText();
+            int adminInputPersen = Integer.parseInt(valueInputPersen);
+
+            Diskon diskon = new Diskon();
+            diskon.setKodePromo(adminInputKode);
+            diskon.setPersen(adminInputPersen);
+            listDiskon.add(diskon);
+
+            Stage stage = (Stage) okButton.getScene().getWindow();
+            stage.close();
+            ubahPromoScene();            
+        });
+        
+        HBox hbox1 = new HBox(20);
+        hbox1.setAlignment(Pos.CENTER);
+        hbox1.getChildren().addAll(inputKode, okButton);
+
+        HBox hbox2 = new HBox(20);
+        hbox2.setAlignment(Pos.CENTER);
+        hbox2.getChildren().addAll(inputPersen, backButton);
+
+        VBox root = new VBox(20);
+        root.getChildren().addAll(hbox1, hbox2);
+        root.setAlignment(Pos.CENTER);
+
+        okButton.setBackground(background); backButton.setBackground(background);
+        return new Scene(root, 250, 120);
     }
 }
