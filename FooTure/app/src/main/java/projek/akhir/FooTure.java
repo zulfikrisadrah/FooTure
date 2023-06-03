@@ -358,7 +358,7 @@ public class FooTure extends Application {
                 Label detail = detailLabel(jumlahMenu, produkDipesan.getProduk().getNama(), totalHargaMenu);
                 detail.setAlignment(Pos.CENTER);
                 detail.setPrefHeight(50);
-                detail.setPrefWidth(460);
+                detail.setPrefWidth(510);
                 detail.setBackground(background);
                 detail.setStyle("-fx-font-size: 25px; -fx-text-fill: white;");
                 root.getChildren().add(detail);
@@ -368,11 +368,11 @@ public class FooTure extends Application {
         Label total = new Label("\t Total \t\t | Rp" + String.valueOf(totalHarga));
         total.setAlignment(Pos.CENTER);
         total.setPrefHeight(50);
-        total.setPrefWidth(460);
+        total.setPrefWidth(510);
         total.setStyle("-fx-font-size: 25px; -fx-text-fill: white;");
 
         Button batalButton = new Button("Batal");
-        batalButton.setPrefWidth(140);
+        batalButton.setPrefWidth(160);
         batalButton.setPrefHeight(40);
         batalButton.setStyle("-fx-font-size: 25px; -fx-text-fill: white;");
         batalButton.setOnAction(event -> {
@@ -384,7 +384,7 @@ public class FooTure extends Application {
 
         int totalHargaAkhir = totalHarga;
         Button promoButton = new Button("Promo");
-        promoButton.setPrefWidth(140);
+        promoButton.setPrefWidth(150);
         promoButton.setPrefHeight(40);
         promoButton.setStyle("-fx-font-size: 25px; -fx-text-fill: white;");
 
@@ -401,7 +401,7 @@ public class FooTure extends Application {
         }
 
         Button bayarButton = new Button("BAYAR");
-        bayarButton.setPrefWidth(140);
+        bayarButton.setPrefWidth(160);
         bayarButton.setPrefHeight(40);
         bayarButton.setStyle("-fx-font-size: 25px; -fx-text-fill: white;");
         bayarButton.setOnAction(event -> {
@@ -431,7 +431,7 @@ public class FooTure extends Application {
     }
 
     private Label detailLabel(int jumlahMenu, String namaMenu, int hargaMenu) {
-        Label detail = new Label("\tx" + jumlahMenu + "\t" + namaMenu + "\t| Rp" + hargaMenu);
+        Label detail = new Label("x" + jumlahMenu + " \t" + namaMenu + "\t\t| Rp" + hargaMenu);
         detail.setAlignment(Pos.CENTER);
         detail.setPrefHeight(30);
         detail.setPrefWidth(300);
@@ -468,7 +468,7 @@ public class FooTure extends Application {
                     System.out.println("Anda menggunakan kode promo \"" + diskon.getKodePromo() + "\" dan mendapat potongan sebesar " + diskon.getPersen() + "%");
                 }
             }
-            total.setText(" Total \t\t| Rp" + String.valueOf(hasilAkhir));
+            total.setText("\t Total \t\t | Rp" + String.valueOf(hasilAkhir));
             Stage stage = (Stage) okButton.getScene().getWindow();
             stage.close();
             Stage promoBerhasilScene = new Stage();
@@ -742,19 +742,22 @@ public class FooTure extends Application {
         okButton.setStyle("-fx-font-size: 15px; -fx-text-fill: white;");
 
         okButton.setOnAction(event -> {
-            String adminInputKode = inputKode.getText();
-            String valueInputPersen = inputPersen.getText();
-            int adminInputPersen = Integer.parseInt(valueInputPersen);
-            Diskon diskon = new Diskon();
-            diskon.setKodePromo(adminInputKode);
-            diskon.setPersen(adminInputPersen);
-            listDiskon.add(diskon);
+            int valueInputPersen = Integer.parseInt(inputPersen.getText());
+            if (valueInputPersen < 100 && valueInputPersen > 0) {
+                String adminInputKode = inputKode.getText();
+                Diskon diskon = new Diskon();
+                diskon.setKodePromo(adminInputKode);
+                diskon.setPersen(valueInputPersen);
+                listDiskon.add(diskon);
 
-            Stage stage = (Stage) okButton.getScene().getWindow();
-            stage.close();
-            ubahPromoScene();
+                Stage stage = (Stage) okButton.getScene().getWindow();
+                stage.close();
+                ubahPromoScene();
 
-            System.out.println("Kode Promo \"" + adminInputKode + "\" telah ditambahkan dengan potongan sebesar " + valueInputPersen + "%");
+                System.out.println("Kode Promo \"" + adminInputKode + "\" telah ditambahkan dengan potongan sebesar " + valueInputPersen + "%"); 
+            } else {
+                System.out.println("Potongan Harga Minimal 1% dan Maksimal 99%");
+            }
         });
 
         HBox hbox1 = new HBox(20);
@@ -778,8 +781,8 @@ public class FooTure extends Application {
         String pesanan = String.valueOf(pesananAwal);
         Label label = new Label(pesanan);
         label.setAlignment(Pos.CENTER);
-        label.setPrefHeight(100);
-        label.setPrefWidth(100);
+        label.setPrefHeight(150);
+        label.setPrefWidth(150);
         label.setStyle("-fx-font-size: 80px; -fx-text-fill: white;");
 
         VBox root = new VBox(20);
@@ -802,7 +805,7 @@ public class FooTure extends Application {
             Stage editScene = new Stage();
             Scene scene = showEditMenu();
             editScene.setScene(scene);
-            editScene.setTitle("Edit Pesanan");
+            editScene.setTitle("Pesanan");
             editScene.show();
         });
 
@@ -814,7 +817,7 @@ public class FooTure extends Application {
         root.setAlignment(Pos.CENTER);
         root.setBackground(background);
 
-        Scene scene = new Scene(root, 200, 200);
+        Scene scene = new Scene(root, 250, 250);
         primaryStage.setScene(scene);
         return new Scene(root);
     }
