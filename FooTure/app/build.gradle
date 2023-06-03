@@ -27,7 +27,7 @@ dependencies {
 
 application {
     // Define the main class for the application.
-    mainClass = 'project.akhir.FooTure'
+    mainClass = 'projek.akhir.FooTure'
 }
 
 tasks.named('test') {
@@ -37,5 +37,5 @@ tasks.named('test') {
 
 javafx {
     version = "17"
-    modules = [ 'javafx.controls' ]
+    modules = ['javafx.controls']
 }
